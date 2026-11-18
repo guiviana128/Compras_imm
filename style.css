@@ -232,6 +232,7 @@ button:active, .btn:active { transform: scale(.98); }
     color: var(--forest); font-size: 11px; font-weight: 800;
 }
 .choice-option.active .choice-number { color: var(--ink); background: var(--paper); }
+.choice-number[hidden] { display: none; }
 .choice-feedback { font-size: 12px; }
 .toolbar {
     display: grid; grid-template-columns: minmax(0, 1fr) 190px 190px;

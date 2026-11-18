@@ -39,16 +39,16 @@
                         <h2 id="choiceTitle">O que você procura?</h2>
                         <p>Escolha uma categoria para explorar o catálogo.</p>
                         <div class="choice-options" role="group" aria-label="Escolher categoria">
-                            <button type="button" class="choice-option active" data-category="" aria-pressed="true"><span>Todas</span><span class="choice-number">0</span></button>
-                            <button type="button" class="choice-option" data-category="Notebooks" aria-pressed="false"><span>Notebooks</span><span class="choice-number">0</span></button>
-                            <button type="button" class="choice-option" data-category="Computadores" aria-pressed="false"><span>Computadores</span><span class="choice-number">0</span></button>
-                            <button type="button" class="choice-option" data-category="Componentes" aria-pressed="false"><span>Componentes</span><span class="choice-number">0</span></button>
-                            <button type="button" class="choice-option" data-category="Periféricos" aria-pressed="false"><span>Periféricos</span><span class="choice-number">0</span></button>
-                            <button type="button" class="choice-option" data-category="Monitores" aria-pressed="false"><span>Monitores</span><span class="choice-number">0</span></button>
-                            <button type="button" class="choice-option" data-category="Redes" aria-pressed="false"><span>Redes</span><span class="choice-number">0</span></button>
-                            <button type="button" class="choice-option" data-category="Armazenamento" aria-pressed="false"><span>Armazenamento</span><span class="choice-number">0</span></button>
-                            <button type="button" class="choice-option" data-category="Áudio e vídeo" aria-pressed="false"><span>Áudio e vídeo</span><span class="choice-number">0</span></button>
-                            <button type="button" class="choice-option" data-category="Outros" aria-pressed="false"><span>Outros</span><span class="choice-number">0</span></button>
+                            <button type="button" class="choice-option active" data-category="" aria-pressed="true"><span>Todas</span><span class="choice-number" hidden></span></button>
+                            <button type="button" class="choice-option" data-category="Notebooks" aria-pressed="false"><span>Notebooks</span><span class="choice-number" hidden></span></button>
+                            <button type="button" class="choice-option" data-category="Computadores" aria-pressed="false"><span>Computadores</span><span class="choice-number" hidden></span></button>
+                            <button type="button" class="choice-option" data-category="Componentes" aria-pressed="false"><span>Componentes</span><span class="choice-number" hidden></span></button>
+                            <button type="button" class="choice-option" data-category="Periféricos" aria-pressed="false"><span>Periféricos</span><span class="choice-number" hidden></span></button>
+                            <button type="button" class="choice-option" data-category="Monitores" aria-pressed="false"><span>Monitores</span><span class="choice-number" hidden></span></button>
+                            <button type="button" class="choice-option" data-category="Redes" aria-pressed="false"><span>Redes</span><span class="choice-number" hidden></span></button>
+                            <button type="button" class="choice-option" data-category="Armazenamento" aria-pressed="false"><span>Armazenamento</span><span class="choice-number" hidden></span></button>
+                            <button type="button" class="choice-option" data-category="Áudio e vídeo" aria-pressed="false"><span>Áudio e vídeo</span><span class="choice-number" hidden></span></button>
+                            <button type="button" class="choice-option" data-category="Outros" aria-pressed="false"><span>Outros</span><span class="choice-number" hidden></span></button>
                         </div>
                         <div class="choice-feedback" id="choiceFeedback" aria-live="polite">Explore todas as categorias</div>
                     </div>
@@ -355,9 +355,12 @@
                     const active = button.dataset.category === category;
                     button.classList.toggle("active", active);
                     button.setAttribute("aria-pressed", String(active));
-                    button.querySelector(".choice-number").textContent = button.dataset.category
+                    const count = button.dataset.category
                         ? products.filter(p => p.category === button.dataset.category).length
                         : products.length;
+                    const number = button.querySelector(".choice-number");
+                    number.textContent = count || "";
+                    number.hidden = count === 0;
                 });
                 $("choiceFeedback").textContent = category
                     ? `Mostrando: ${category}`
