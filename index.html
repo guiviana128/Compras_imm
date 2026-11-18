@@ -29,10 +29,28 @@
                         <button class="btn btn-outline" id="addHero">+ Adicionar produto</button>
                     </div>
                 </div>
-                <div class="hero-art" aria-hidden="true">
-                    <span class="art-label one">ESCOLHA COM CLAREZA</span>
-                    <strong><img src="logo-horizontal-branco.webp" alt=""></strong>
-                    <span class="art-label two">TUDO EM UM LUGAR ↗</span>
+                <div class="hero-art">
+                    <div class="choice-bubble" aria-labelledby="choiceTitle">
+                        <div class="choice-bubble-top">
+                            <span class="choice-spark" aria-hidden="true">✦</span>
+                            <span class="choice-kicker">ENCONTRE DO SEU JEITO</span>
+                        </div>
+                        <h2 id="choiceTitle">O que você procura?</h2>
+                        <p>Escolha uma categoria para explorar o catálogo.</p>
+                        <div class="choice-options" role="group" aria-label="Escolher categoria">
+                            <button type="button" class="choice-option active" data-category="" aria-pressed="true">✦ Todas</button>
+                            <button type="button" class="choice-option" data-category="Notebooks" aria-pressed="false">💻 Notebooks</button>
+                            <button type="button" class="choice-option" data-category="Computadores" aria-pressed="false">🖥️ Computadores</button>
+                            <button type="button" class="choice-option" data-category="Componentes" aria-pressed="false">⚙️ Componentes</button>
+                            <button type="button" class="choice-option" data-category="Periféricos" aria-pressed="false">⌨️ Periféricos</button>
+                            <button type="button" class="choice-option" data-category="Monitores" aria-pressed="false">🖥️ Monitores</button>
+                            <button type="button" class="choice-option" data-category="Redes" aria-pressed="false">📡 Redes</button>
+                            <button type="button" class="choice-option" data-category="Armazenamento" aria-pressed="false">💾 Armazenamento</button>
+                            <button type="button" class="choice-option" data-category="Áudio e vídeo" aria-pressed="false">🎧 Áudio e vídeo</button>
+                            <button type="button" class="choice-option" data-category="Outros" aria-pressed="false">✦ Outros</button>
+                        </div>
+                        <div class="choice-feedback" id="choiceFeedback" aria-live="polite">Explore todas as categorias</div>
+                    </div>
                 </div>
             </section>
 
@@ -283,7 +301,6 @@
                 $("categoryFilter").replaceChildren(
                     new Option("Todas as categorias", ""),
                     ...categories
-                        .filter(category => products.some(p => p.category === category))
                         .map(category => new Option(category, category))
                 );
                 $("categoryFilter").value = selectedCategory;
@@ -291,6 +308,14 @@
                 const query = $("search").value.trim().toLocaleLowerCase("pt-BR");
                 const category = $("categoryFilter").value;
                 const sort = $("sort").value;
+                document.querySelectorAll(".choice-option").forEach(button => {
+                    const active = button.dataset.category === category;
+                    button.classList.toggle("active", active);
+                    button.setAttribute("aria-pressed", String(active));
+                });
+                $("choiceFeedback").textContent = category
+                    ? `Mostrando: ${category}`
+                    : "Explore todas as categorias";
 
                 const visible = products.filter(p =>
                     (!category || p.category === category) &&
@@ -423,6 +448,16 @@
             };
             document.addEventListener("keydown", e => {
                 if (e.key === "Escape") closeModal();
+            });
+
+            document.querySelectorAll(".choice-option").forEach(button => {
+                button.addEventListener("click", () => {
+                    $("categoryFilter").value = button.dataset.category;
+                    render();
+                    $("produtos").scrollIntoView({
+                        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"
+                    });
+                });
             });
 
             ["search", "categoryFilter", "sort"].forEach(id => {
