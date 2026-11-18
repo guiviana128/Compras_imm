@@ -65,21 +65,21 @@
                     <span id="count" aria-live="polite">Carregando...</span>
                 </div>
 
-                <div class="toolbar" role="search">
-                    <div class="toolbar-field toolbar-search">
+                <div class="toolbar">
+                    <div class="toolbar-field toolbar-search" role="search">
                         <label for="search">Pesquisar</label>
                         <input class="field search" id="search" type="search"
                             placeholder="Produto, marca ou descrição..." autocomplete="off">
                     </div>
-                    <div class="toolbar-field">
-                        <label for="sort">Ordenar por</label>
-                        <select class="field" id="sort">
-                            <option value="recent">Mais recentes</option>
-                            <option value="name">Nome A–Z</option>
-                            <option value="low">Menor preço</option>
-                            <option value="high">Maior preço</option>
-                        </select>
-                    </div>
+                    <fieldset class="sort-picker">
+                        <legend>Ordenar por</legend>
+                        <div class="sort-options">
+                            <button type="button" class="sort-option active" data-sort="recent" aria-pressed="true">Mais recentes</button>
+                            <button type="button" class="sort-option" data-sort="name" aria-pressed="false">Nome A–Z</button>
+                            <button type="button" class="sort-option" data-sort="low" aria-pressed="false">Menor preço</button>
+                            <button type="button" class="sort-option" data-sort="high" aria-pressed="false">Maior preço</button>
+                        </div>
+                    </fieldset>
                 </div>
                 <div class="filter-summary" id="filterSummary" hidden>
                     <span>Mostrando <strong id="filterName"></strong></span>
@@ -197,6 +197,7 @@
 
             let products = [];
             let selectedCategory = "";
+            let sortMode = "recent";
             let loading = true;
             let loadError = false;
             let lastFocus;
@@ -348,7 +349,12 @@
                 }
                 const query = $("search").value.trim().toLocaleLowerCase("pt-BR");
                 const category = selectedCategory;
-                const sort = $("sort").value;
+                const sort = sortMode;
+                document.querySelectorAll(".sort-option").forEach(button => {
+                    const active = button.dataset.sort === sortMode;
+                    button.classList.toggle("active", active);
+                    button.setAttribute("aria-pressed", String(active));
+                });
                 document.querySelectorAll(".choice-option").forEach(button => {
                     const active = button.dataset.category === category;
                     button.classList.toggle("active", active);
@@ -541,8 +547,12 @@
                 document.querySelector(".choice-option.active")?.focus({ preventScroll: true });
             };
 
-            ["search", "sort"].forEach(id => {
-                $(id).addEventListener(id === "search" ? "input" : "change", render);
+            $("search").addEventListener("input", render);
+            document.querySelectorAll(".sort-option").forEach(button => {
+                button.addEventListener("click", () => {
+                    sortMode = button.dataset.sort;
+                    render();
+                });
             });
 
             $("imageUrl").addEventListener("input", () => {
