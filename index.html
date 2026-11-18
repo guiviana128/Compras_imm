@@ -37,20 +37,20 @@
                             <span class="choice-kicker">ENCONTRE DO SEU JEITO</span>
                         </div>
                         <h2 id="choiceTitle">O que você procura?</h2>
-                        <p>Escolha uma categoria para explorar o catálogo.</p>
+                        <p>Escolha entre as categorias com produtos.</p>
                         <div class="choice-options" role="group" aria-label="Escolher categoria">
                             <button type="button" class="choice-option active" data-category="" aria-pressed="true"><span>Todas</span><span class="choice-number" hidden></span></button>
-                            <button type="button" class="choice-option" data-category="Notebooks" aria-pressed="false"><span>Notebooks</span><span class="choice-number" hidden></span></button>
-                            <button type="button" class="choice-option" data-category="Computadores" aria-pressed="false"><span>Computadores</span><span class="choice-number" hidden></span></button>
-                            <button type="button" class="choice-option" data-category="Componentes" aria-pressed="false"><span>Componentes</span><span class="choice-number" hidden></span></button>
-                            <button type="button" class="choice-option" data-category="Periféricos" aria-pressed="false"><span>Periféricos</span><span class="choice-number" hidden></span></button>
-                            <button type="button" class="choice-option" data-category="Monitores" aria-pressed="false"><span>Monitores</span><span class="choice-number" hidden></span></button>
-                            <button type="button" class="choice-option" data-category="Redes" aria-pressed="false"><span>Redes</span><span class="choice-number" hidden></span></button>
-                            <button type="button" class="choice-option" data-category="Armazenamento" aria-pressed="false"><span>Armazenamento</span><span class="choice-number" hidden></span></button>
-                            <button type="button" class="choice-option" data-category="Áudio e vídeo" aria-pressed="false"><span>Áudio e vídeo</span><span class="choice-number" hidden></span></button>
-                            <button type="button" class="choice-option" data-category="Outros" aria-pressed="false"><span>Outros</span><span class="choice-number" hidden></span></button>
+                            <button type="button" class="choice-option" data-category="Notebooks" aria-pressed="false" hidden><span>Notebooks</span><span class="choice-number" hidden></span></button>
+                            <button type="button" class="choice-option" data-category="Computadores" aria-pressed="false" hidden><span>Computadores</span><span class="choice-number" hidden></span></button>
+                            <button type="button" class="choice-option" data-category="Componentes" aria-pressed="false" hidden><span>Componentes</span><span class="choice-number" hidden></span></button>
+                            <button type="button" class="choice-option" data-category="Periféricos" aria-pressed="false" hidden><span>Periféricos</span><span class="choice-number" hidden></span></button>
+                            <button type="button" class="choice-option" data-category="Monitores" aria-pressed="false" hidden><span>Monitores</span><span class="choice-number" hidden></span></button>
+                            <button type="button" class="choice-option" data-category="Redes" aria-pressed="false" hidden><span>Redes</span><span class="choice-number" hidden></span></button>
+                            <button type="button" class="choice-option" data-category="Armazenamento" aria-pressed="false" hidden><span>Armazenamento</span><span class="choice-number" hidden></span></button>
+                            <button type="button" class="choice-option" data-category="Áudio e vídeo" aria-pressed="false" hidden><span>Áudio e vídeo</span><span class="choice-number" hidden></span></button>
+                            <button type="button" class="choice-option" data-category="Outros" aria-pressed="false" hidden><span>Outros</span><span class="choice-number" hidden></span></button>
                         </div>
-                        <div class="choice-feedback" id="choiceFeedback" aria-live="polite">Explore todas as categorias</div>
+                        <div class="choice-feedback" id="choiceFeedback" aria-live="polite">Carregando categorias...</div>
                     </div>
                 </div>
             </section>
@@ -72,12 +72,6 @@
                             placeholder="Produto, marca ou descrição..." autocomplete="off">
                     </div>
                     <div class="toolbar-field">
-                        <label for="categoryFilter">Categoria</label>
-                        <select class="field" id="categoryFilter">
-                            <option value="">Todas as categorias</option>
-                        </select>
-                    </div>
-                    <div class="toolbar-field">
                         <label for="sort">Ordenar por</label>
                         <select class="field" id="sort">
                             <option value="recent">Mais recentes</option>
@@ -86,6 +80,11 @@
                             <option value="high">Maior preço</option>
                         </select>
                     </div>
+                </div>
+                <div class="filter-summary" id="filterSummary" hidden>
+                    <span>Mostrando <strong id="filterName"></strong></span>
+                    <button type="button" class="filter-link" id="changeCategory">Trocar categoria</button>
+                    <button type="button" class="filter-link" id="clearCategory">Ver todas</button>
                 </div>
 
                 <div class="grid" id="grid"></div>
@@ -197,6 +196,7 @@
             };
 
             let products = [];
+            let selectedCategory = "";
             let loading = true;
             let loadError = false;
             let lastFocus;
@@ -336,20 +336,18 @@
                         state.append(retry);
                     }
                     $("count").textContent = loading ? "Carregando..." : "Indisponível";
+                    $("choiceFeedback").textContent = loading
+                        ? "Carregando categorias..."
+                        : "Não foi possível carregar as categorias";
                     grid.append(state);
                     return;
                 }
 
-                const selectedCategory = $("categoryFilter").value;
-                $("categoryFilter").replaceChildren(
-                    new Option("Todas as categorias", ""),
-                    ...categories
-                        .map(category => new Option(category, category))
-                );
-                $("categoryFilter").value = selectedCategory;
-
+                if (selectedCategory && !products.some(p => p.category === selectedCategory)) {
+                    selectedCategory = "";
+                }
                 const query = $("search").value.trim().toLocaleLowerCase("pt-BR");
-                const category = $("categoryFilter").value;
+                const category = selectedCategory;
                 const sort = $("sort").value;
                 document.querySelectorAll(".choice-option").forEach(button => {
                     const active = button.dataset.category === category;
@@ -361,10 +359,13 @@
                     const number = button.querySelector(".choice-number");
                     number.textContent = count || "";
                     number.hidden = count === 0;
+                    button.hidden = !!button.dataset.category && count === 0;
                 });
                 $("choiceFeedback").textContent = category
-                    ? `Mostrando: ${category}`
-                    : "Explore todas as categorias";
+                    ? `Selecionado: ${category}`
+                    : products.length ? "Escolha uma categoria acima" : "Adicione um produto para começar";
+                $("filterSummary").hidden = !category;
+                if (category) $("filterName").textContent = category;
 
                 const visible = products.filter(p =>
                     (!category || p.category === category) &&
@@ -476,7 +477,7 @@
                 $("modalTitle").textContent = item ? "Editar produto" : "Adicionar produto";
                 $("link").value = item?.link || "";
                 $("name").value = item?.name || "";
-                $("category").value = item?.category || $("categoryFilter").value || "Notebooks";
+                $("category").value = item?.category || selectedCategory || "Notebooks";
                 $("price").value = item?.price ?? "";
                 $("description").value = item?.description || "";
                 uploadedImage = item?.image?.startsWith("data:") ? item.image : "";
@@ -521,7 +522,7 @@
 
             document.querySelectorAll(".choice-option").forEach(button => {
                 button.addEventListener("click", () => {
-                    $("categoryFilter").value = button.dataset.category;
+                    selectedCategory = button.dataset.category;
                     render();
                     $("produtos").scrollIntoView({
                         behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"
@@ -529,7 +530,18 @@
                 });
             });
 
-            ["search", "categoryFilter", "sort"].forEach(id => {
+            $("clearCategory").onclick = () => {
+                selectedCategory = "";
+                render();
+            };
+            $("changeCategory").onclick = () => {
+                $("choiceTitle").scrollIntoView({
+                    behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"
+                });
+                document.querySelector(".choice-option.active")?.focus({ preventScroll: true });
+            };
+
+            ["search", "sort"].forEach(id => {
                 $(id).addEventListener(id === "search" ? "input" : "change", render);
             });
 
