@@ -9,6 +9,7 @@
 </head>
 
 <body>
+    <a class="skip-link" href="#produtos">Ir para o catálogo</a>
     <div class="container">
         <header>
             <a href="#" class="brand" aria-label="IMMakers Ads — início"><img src="logo-horizontal-branco.webp" alt="IMMakers Ads"></a>
@@ -18,7 +19,7 @@
             </div>
         </header>
 
-        <main>
+        <main id="conteudo">
             <section class="hero">
                 <div class="hero-copy">
                     <div class="eyebrow">Sua seleção de tecnologia</div>
@@ -38,44 +39,53 @@
                         <h2 id="choiceTitle">O que você procura?</h2>
                         <p>Escolha uma categoria para explorar o catálogo.</p>
                         <div class="choice-options" role="group" aria-label="Escolher categoria">
-                            <button type="button" class="choice-option active" data-category="" aria-pressed="true">✦ Todas</button>
-                            <button type="button" class="choice-option" data-category="Notebooks" aria-pressed="false">💻 Notebooks</button>
-                            <button type="button" class="choice-option" data-category="Computadores" aria-pressed="false">🖥️ Computadores</button>
-                            <button type="button" class="choice-option" data-category="Componentes" aria-pressed="false">⚙️ Componentes</button>
-                            <button type="button" class="choice-option" data-category="Periféricos" aria-pressed="false">⌨️ Periféricos</button>
-                            <button type="button" class="choice-option" data-category="Monitores" aria-pressed="false">🖥️ Monitores</button>
-                            <button type="button" class="choice-option" data-category="Redes" aria-pressed="false">📡 Redes</button>
-                            <button type="button" class="choice-option" data-category="Armazenamento" aria-pressed="false">💾 Armazenamento</button>
-                            <button type="button" class="choice-option" data-category="Áudio e vídeo" aria-pressed="false">🎧 Áudio e vídeo</button>
-                            <button type="button" class="choice-option" data-category="Outros" aria-pressed="false">✦ Outros</button>
+                            <button type="button" class="choice-option active" data-category="" aria-pressed="true"><span>Todas</span><span class="choice-number">0</span></button>
+                            <button type="button" class="choice-option" data-category="Notebooks" aria-pressed="false"><span>Notebooks</span><span class="choice-number">0</span></button>
+                            <button type="button" class="choice-option" data-category="Computadores" aria-pressed="false"><span>Computadores</span><span class="choice-number">0</span></button>
+                            <button type="button" class="choice-option" data-category="Componentes" aria-pressed="false"><span>Componentes</span><span class="choice-number">0</span></button>
+                            <button type="button" class="choice-option" data-category="Periféricos" aria-pressed="false"><span>Periféricos</span><span class="choice-number">0</span></button>
+                            <button type="button" class="choice-option" data-category="Monitores" aria-pressed="false"><span>Monitores</span><span class="choice-number">0</span></button>
+                            <button type="button" class="choice-option" data-category="Redes" aria-pressed="false"><span>Redes</span><span class="choice-number">0</span></button>
+                            <button type="button" class="choice-option" data-category="Armazenamento" aria-pressed="false"><span>Armazenamento</span><span class="choice-number">0</span></button>
+                            <button type="button" class="choice-option" data-category="Áudio e vídeo" aria-pressed="false"><span>Áudio e vídeo</span><span class="choice-number">0</span></button>
+                            <button type="button" class="choice-option" data-category="Outros" aria-pressed="false"><span>Outros</span><span class="choice-number">0</span></button>
                         </div>
                         <div class="choice-feedback" id="choiceFeedback" aria-live="polite">Explore todas as categorias</div>
                     </div>
                 </div>
             </section>
 
-            <section id="produtos">
+            <section id="produtos" tabindex="-1">
                 <div class="section-title">
                     <div>
                         <div class="eyebrow">Catálogo de compras</div>
                         <h2>Produtos selecionados</h2>
                         <p>Encontre, compare e acesse seus produtos favoritos.</p>
                     </div>
-                    <span id="count">0 produtos</span>
+                    <span id="count" aria-live="polite">Carregando...</span>
                 </div>
 
-                <div class="toolbar">
-                    <input class="field search" id="search" type="search"
-                        placeholder="Pesquisar produto, marca ou descrição..." aria-label="Pesquisar produtos">
-                    <select class="field" id="categoryFilter" aria-label="Filtrar categoria">
-                        <option value="">Todas as categorias</option>
-                    </select>
-                    <select class="field" id="sort" aria-label="Ordenar produtos">
-                        <option value="recent">Mais recentes</option>
-                        <option value="name">Nome A–Z</option>
-                        <option value="low">Menor preço</option>
-                        <option value="high">Maior preço</option>
-                    </select>
+                <div class="toolbar" role="search">
+                    <div class="toolbar-field toolbar-search">
+                        <label for="search">Pesquisar</label>
+                        <input class="field search" id="search" type="search"
+                            placeholder="Produto, marca ou descrição..." autocomplete="off">
+                    </div>
+                    <div class="toolbar-field">
+                        <label for="categoryFilter">Categoria</label>
+                        <select class="field" id="categoryFilter">
+                            <option value="">Todas as categorias</option>
+                        </select>
+                    </div>
+                    <div class="toolbar-field">
+                        <label for="sort">Ordenar por</label>
+                        <select class="field" id="sort">
+                            <option value="recent">Mais recentes</option>
+                            <option value="name">Nome A–Z</option>
+                            <option value="low">Menor preço</option>
+                            <option value="high">Maior preço</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div class="grid" id="grid"></div>
@@ -86,8 +96,7 @@
             <span>© <span id="year"></span> IMMakers Ads · Produtos compartilhados entre visitantes. Baixe um backup para guardá-los.</span>
             <div>
                 <button class="btn btn-outline btn-small" id="exportBtn">↓ Baixar backup</button>
-                <label class="btn btn-outline btn-small" for="importFile" style="cursor:pointer">↑ Importar
-                    backup</label>
+                <button class="btn btn-outline btn-small" id="importBtn" type="button">↑ Importar backup</button>
                 <input type="file" id="importFile" accept=".json,application/json" hidden>
             </div>
         </footer>
@@ -165,7 +174,7 @@
                 <p id="formStatus" role="status"></p>
                 <div class="modal-actions">
                     <button class="btn btn-outline" id="cancelModal" type="button">Cancelar</button>
-                    <button class="btn btn-primary" type="submit">Salvar produto</button>
+                    <button class="btn btn-primary" id="saveProduct" type="submit">Salvar produto</button>
                 </div>
             </form>
         </div>
@@ -181,13 +190,16 @@
                 "Notebooks", "Computadores", "Componentes", "Periféricos",
                 "Monitores", "Redes", "Armazenamento", "Áudio e vídeo", "Outros"
             ];
-            const icons = {
-                Notebooks: "💻", Computadores: "🖥️", Componentes: "⚙️",
-                Periféricos: "⌨️", Monitores: "🖥️", Redes: "📡",
-                Armazenamento: "💾", "Áudio e vídeo": "🎧", Outros: "✦"
+            const marks = {
+                Notebooks: "N", Computadores: "C", Componentes: "CP",
+                Periféricos: "P", Monitores: "M", Redes: "R",
+                Armazenamento: "A", "Áudio e vídeo": "AV", Outros: "IM"
             };
 
             let products = [];
+            let loading = true;
+            let loadError = false;
+            let lastFocus;
             let uploadedImage = "";
             let toastTimer;
             const money = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
@@ -225,13 +237,22 @@
             }
 
             async function load() {
+                loading = true;
+                loadError = false;
+                render();
                 try {
                     const response = await fetch("/api/products", { cache: "no-store" });
                     if (!response.ok) throw new Error("Falha ao carregar");
                     const data = await response.json();
                     products = Array.isArray(data) ? data.map(clean).filter(Boolean) : [];
+                    loading = false;
                     render();
-                    const legacy = JSON.parse(localStorage.getItem(KEY) || "[]");
+                    let legacy = [];
+                    try {
+                        legacy = JSON.parse(localStorage.getItem(KEY) || "[]");
+                    } catch {
+                        legacy = [];
+                    }
                     if (Array.isArray(legacy) && legacy.length) {
                         for (const old of legacy) {
                             const item = clean(old);
@@ -241,7 +262,10 @@
                         notify("Produtos deste navegador agora estão compartilhados.");
                     }
                 } catch {
-                    notify("Não foi possível carregar o catálogo. Tente atualizar a página.");
+                    loading = false;
+                    loadError = true;
+                    render();
+                    notify("Não foi possível carregar o catálogo. Tente novamente.");
                 }
             }
 
@@ -297,6 +321,25 @@
                 const grid = $("grid");
                 grid.replaceChildren();
 
+                if (loading || loadError) {
+                    const state = element("div", "empty state");
+                    state.append(
+                        element("div", "empty-icon", loading ? "…" : "!"),
+                        element("h3", "", loading ? "Carregando catálogo" : "Não foi possível carregar"),
+                        element("p", "", loading
+                            ? "Buscando os produtos compartilhados."
+                            : "Confira sua conexão e tente novamente.")
+                    );
+                    if (loadError) {
+                        const retry = element("button", "btn btn-primary", "Tentar novamente");
+                        retry.onclick = load;
+                        state.append(retry);
+                    }
+                    $("count").textContent = loading ? "Carregando..." : "Indisponível";
+                    grid.append(state);
+                    return;
+                }
+
                 const selectedCategory = $("categoryFilter").value;
                 $("categoryFilter").replaceChildren(
                     new Option("Todas as categorias", ""),
@@ -312,6 +355,9 @@
                     const active = button.dataset.category === category;
                     button.classList.toggle("active", active);
                     button.setAttribute("aria-pressed", String(active));
+                    button.querySelector(".choice-number").textContent = button.dataset.category
+                        ? products.filter(p => p.category === button.dataset.category).length
+                        : products.length;
                 });
                 $("choiceFeedback").textContent = category
                     ? `Mostrando: ${category}`
@@ -336,7 +382,7 @@
                 if (!visible.length) {
                     const empty = element("div", "empty");
                     empty.append(
-                        element("div", "empty-icon", products.length ? "🔎" : "⌘"),
+                        element("div", "empty-icon", "✦"),
                         element("h3", "", products.length ? "Nenhum produto encontrado" : "Seu catálogo começa aqui"),
                         element("p", "", products.length
                             ? "Tente outra pesquisa ou categoria."
@@ -364,11 +410,11 @@
                         img.referrerPolicy = "no-referrer";
                         img.onerror = () => {
                             img.remove();
-                            photo.append(element("span", "emoji", icons[p.category] || "✦"));
+                            photo.append(element("span", "category-mark", marks[p.category] || "IM"));
                         };
                         photo.append(img);
                     } else {
-                        photo.append(element("span", "emoji", icons[p.category] || "✦"));
+                        photo.append(element("span", "category-mark", marks[p.category] || "IM"));
                     }
 
                     const body = element("div", "card-body");
@@ -386,12 +432,12 @@
                     buy.rel = "noopener noreferrer";
                     buy.setAttribute("aria-label", `Abrir link de compra de ${p.name}`);
 
-                    const edit = element("button", "icon-btn", "✎");
+                    const edit = element("button", "text-action", "Editar");
                     edit.title = "Editar produto";
                     edit.setAttribute("aria-label", `Editar ${p.name}`);
                     edit.onclick = () => openModal(p);
 
-                    const remove = element("button", "icon-btn", "×");
+                    const remove = element("button", "text-action", "Excluir");
                     remove.title = "Excluir produto";
                     remove.setAttribute("aria-label", `Excluir ${p.name}`);
                     remove.onclick = () => {
@@ -417,12 +463,17 @@
             }
 
             function openModal(item) {
+                if (loading || loadError) {
+                    notify("Aguarde o catálogo carregar antes de adicionar produtos.");
+                    return;
+                }
+                lastFocus = document.activeElement;
                 $("productForm").reset();
                 $("productId").value = item?.id || "";
                 $("modalTitle").textContent = item ? "Editar produto" : "Adicionar produto";
                 $("link").value = item?.link || "";
                 $("name").value = item?.name || "";
-                $("category").value = item?.category || "Notebooks";
+                $("category").value = item?.category || $("categoryFilter").value || "Notebooks";
                 $("price").value = item?.price ?? "";
                 $("description").value = item?.description || "";
                 uploadedImage = item?.image?.startsWith("data:") ? item.image : "";
@@ -437,6 +488,7 @@
             function closeModal() {
                 $("overlay").classList.remove("open");
                 document.body.style.overflow = "";
+                lastFocus?.focus?.();
             }
 
             $("addTop").onclick = () => openModal();
@@ -447,7 +499,21 @@
                 if (e.target === $("overlay")) closeModal();
             };
             document.addEventListener("keydown", e => {
+                if (!$("overlay").classList.contains("open")) return;
                 if (e.key === "Escape") closeModal();
+                if (e.key !== "Tab") return;
+                const focusable = [...$("overlay").querySelectorAll(
+                    'button:not([disabled]), input:not([hidden]):not([type="hidden"]), select, textarea'
+                )].filter(el => el.offsetParent !== null);
+                const first = focusable[0];
+                const last = focusable[focusable.length - 1];
+                if (e.shiftKey && document.activeElement === first) {
+                    e.preventDefault();
+                    last.focus();
+                } else if (!e.shiftKey && document.activeElement === last) {
+                    e.preventDefault();
+                    first.focus();
+                }
             });
 
             document.querySelectorAll(".choice-option").forEach(button => {
@@ -567,9 +633,17 @@
                     return;
                 }
 
-                if (await save(item)) {
-                    closeModal();
-                    notify(id ? "Produto atualizado." : "Produto adicionado.");
+                const button = $("saveProduct");
+                button.disabled = true;
+                button.textContent = "Salvando...";
+                try {
+                    if (await save(item)) {
+                        closeModal();
+                        notify(id ? "Produto atualizado." : "Produto adicionado.");
+                    }
+                } finally {
+                    button.disabled = false;
+                    button.textContent = "Salvar produto";
                 }
             };
 
@@ -585,6 +659,8 @@
                 a.click();
                 setTimeout(() => URL.revokeObjectURL(url), 1000);
             };
+
+            $("importBtn").onclick = () => $("importFile").click();
 
             $("importFile").onchange = async e => {
                 const file = e.target.files?.[0];
@@ -608,7 +684,6 @@
                 e.target.value = "";
             };
 
-            render();
             load();
         })();
     </script>
