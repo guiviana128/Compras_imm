@@ -65,8 +65,7 @@
         </main>
 
         <footer>
-            <span>© <span id="year"></span> IMMakers Ads · Produtos salvos neste navegador. Baixe um backup para
-                transferi-los.</span>
+            <span>© <span id="year"></span> IMMakers Ads · Produtos compartilhados entre visitantes. Baixe um backup para guardá-los.</span>
             <div>
                 <button class="btn btn-outline btn-small" id="exportBtn">↓ Baixar backup</button>
                 <label class="btn btn-outline btn-small" for="importFile" style="cursor:pointer">↑ Importar
@@ -170,7 +169,7 @@
                 Armazenamento: "💾", "Áudio e vídeo": "🎧", Outros: "✦"
             };
 
-            let products = load();
+            let products = [];
             let uploadedImage = "";
             let toastTimer;
             const money = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
@@ -207,24 +206,57 @@
                 };
             }
 
-            function load() {
+            async function load() {
                 try {
-                    const data = JSON.parse(localStorage.getItem(KEY) || "[]");
-                    return Array.isArray(data) ? data.map(clean).filter(Boolean) : [];
+                    const response = await fetch("/api/products", { cache: "no-store" });
+                    if (!response.ok) throw new Error("Falha ao carregar");
+                    const data = await response.json();
+                    products = Array.isArray(data) ? data.map(clean).filter(Boolean) : [];
+                    render();
+                    const legacy = JSON.parse(localStorage.getItem(KEY) || "[]");
+                    if (Array.isArray(legacy) && legacy.length) {
+                        for (const old of legacy) {
+                            const item = clean(old);
+                            if (item && !(await save(item))) return;
+                        }
+                        localStorage.removeItem(KEY);
+                        notify("Produtos deste navegador agora estão compartilhados.");
+                    }
                 } catch {
-                    return [];
+                    notify("Não foi possível carregar o catálogo. Tente atualizar a página.");
                 }
             }
 
-            function save(next) {
+            async function save(item) {
                 try {
-                    localStorage.setItem(KEY, JSON.stringify(next));
-                    products = next;
+                    const response = await fetch("/api/products", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(item)
+                    });
+                    if (!response.ok) throw new Error("Falha ao salvar");
+                    const saved = clean(await response.json());
+                    if (!saved) throw new Error("Resposta inválida");
+                    products = [saved, ...products.filter(p => p.id !== saved.id)];
                     render();
                     return true;
                 } catch {
-                    notify("Espaço insuficiente. Tente uma foto menor ou baixe um backup.");
+                    notify("Não foi possível salvar o produto. Tente novamente.");
                     return false;
+                }
+            }
+
+            async function removeProduct(id) {
+                try {
+                    const response = await fetch(`/api/products?id=${encodeURIComponent(id)}`, {
+                        method: "DELETE"
+                    });
+                    if (!response.ok) throw new Error("Falha ao excluir");
+                    products = products.filter(item => item.id !== id);
+                    render();
+                    notify("Produto excluído.");
+                } catch {
+                    notify("Não foi possível excluir o produto. Tente novamente.");
                 }
             }
 
@@ -338,9 +370,7 @@
                     remove.title = "Excluir produto";
                     remove.setAttribute("aria-label", `Excluir ${p.name}`);
                     remove.onclick = () => {
-                        if (confirm(`Excluir “${p.name}” do catálogo?`)) {
-                            if (save(products.filter(item => item.id !== p.id))) notify("Produto excluído.");
-                        }
+                        if (confirm(`Excluir “${p.name}” do catálogo?`)) removeProduct(p.id);
                     };
 
                     actions.append(buy, edit, remove);
@@ -482,7 +512,7 @@
                 }
             };
 
-            $("productForm").onsubmit = e => {
+            $("productForm").onsubmit = async e => {
                 e.preventDefault();
                 const id = $("productId").value;
                 const existing = products.find(p => p.id === id);
@@ -502,11 +532,7 @@
                     return;
                 }
 
-                const next = id
-                    ? products.map(p => p.id === id ? item : p)
-                    : [item, ...products];
-
-                if (save(next)) {
+                if (await save(item)) {
                     closeModal();
                     notify(id ? "Produto atualizado." : "Produto adicionado.");
                 }
@@ -535,9 +561,12 @@
                     const imported = list.map(clean).filter(Boolean);
                     if (!imported.length) throw new Error("Sem produtos");
 
-                    const merged = new Map(products.map(p => [p.id, p]));
-                    imported.forEach(p => merged.set(p.id, p));
-                    if (save([...merged.values()])) notify(`${imported.length} produto(s) importado(s).`);
+                    let savedCount = 0;
+                    for (const item of imported) {
+                        if (!(await save(item))) break;
+                        savedCount++;
+                    }
+                    if (savedCount) notify(`${savedCount} produto(s) importado(s).`);
                 } catch {
                     notify("Arquivo de backup inválido.");
                 }
@@ -545,6 +574,7 @@
             };
 
             render();
+            load();
         })();
     </script>
 </body>
