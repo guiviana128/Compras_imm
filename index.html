@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IMMakers Ads | Catálogo Tech</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <a href="#" class="brand" aria-label="IMMakers Ads — início"><img src="logo-horizontal-branco.webp" alt="IMMakers Ads"></a>
+            <div class="header-right">
+                <a class="header-link" href="#produtos">Ver catálogo</a>
+                <button class="btn btn-primary" id="addTop">+ Adicionar produto</button>
+            </div>
+        </header>
+
+        <main>
+            <section class="hero">
+                <div class="hero-copy">
+                    <div class="eyebrow">Sua seleção de tecnologia</div>
+                    <h1>Boas escolhas<br>começam <span>aqui.</span></h1>
+                    <p>Organize os produtos que você quer comprar, encontre cada opção rapidamente e acesse as lojas em um clique.</p>
+                    <div class="hero-actions">
+                        <a class="btn btn-primary" href="#produtos">Explorar catálogo ↗</a>
+                        <button class="btn btn-outline" id="addHero">+ Adicionar produto</button>
+                    </div>
+                </div>
+                <div class="hero-art" aria-hidden="true">
+                    <span class="art-label one">ESCOLHA COM CLAREZA</span>
+                    <strong><img src="logo-horizontal-branco.webp" alt=""></strong>
+                    <span class="art-label two">TUDO EM UM LUGAR ↗</span>
+                </div>
+            </section>
+
+            <section id="produtos">
+                <div class="section-title">
+                    <div>
+                        <div class="eyebrow">Catálogo de compras</div>
+                        <h2>Produtos selecionados</h2>
+                        <p>Encontre, compare e acesse seus produtos favoritos.</p>
+                    </div>
+                    <span id="count">0 produtos</span>
+                </div>
+
+                <div class="toolbar">
+                    <input class="field search" id="search" type="search"
+                        placeholder="Pesquisar produto, marca ou descrição..." aria-label="Pesquisar produtos">
+                    <select class="field" id="categoryFilter" aria-label="Filtrar categoria">
+                        <option value="">Todas as categorias</option>
+                    </select>
+                    <select class="field" id="sort" aria-label="Ordenar produtos">
+                        <option value="recent">Mais recentes</option>
+                        <option value="name">Nome A–Z</option>
+                        <option value="low">Menor preço</option>
+                        <option value="high">Maior preço</option>
+                    </select>
+                </div>
+
+                <div class="grid" id="grid"></div>
+            </section>
+        </main>
+
+        <footer>
+            <span>© <span id="year"></span> IMMakers Ads · Produtos salvos neste navegador. Baixe um backup para
+                transferi-los.</span>
+            <div>
+                <button class="btn btn-outline btn-small" id="exportBtn">↓ Baixar backup</button>
+                <label class="btn btn-outline btn-small" for="importFile" style="cursor:pointer">↑ Importar
+                    backup</label>
+                <input type="file" id="importFile" accept=".json,application/json" hidden>
+            </div>
+        </footer>
+    </div>
+
+    <div class="overlay" id="overlay">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+            <div class="modal-header">
+                <div>
+                    <h2 id="modalTitle">Adicionar produto</h2>
+                    <p>Preencha os dados do produto de TI.</p>
+                </div>
+                <button class="close" id="closeModal" aria-label="Fechar">×</button>
+            </div>
+
+            <form id="productForm">
+                <input type="hidden" id="productId">
+                <div class="form-grid">
+                    <div class="form-row full">
+                        <label for="link">Link de compra *</label>
+                        <div class="link-row">
+                            <input class="field" id="link" type="url" placeholder="https://loja.com/produto" required>
+                            <button class="btn btn-outline btn-small" id="autoFill" type="button">Preencher pelo
+                                link</button>
+                        </div>
+                        <small>Algumas lojas bloqueiam a leitura automática. Nesse caso, preencha nome e foto
+                            manualmente.</small>
+                    </div>
+
+                    <div class="form-row full">
+                        <label for="name">Nome do produto *</label>
+                        <input class="field" id="name" maxlength="120" placeholder="Ex.: Notebook, monitor, teclado..."
+                            required>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="category">Categoria</label>
+                        <select class="field" id="category">
+                            <option>Notebooks</option>
+                            <option>Computadores</option>
+                            <option>Componentes</option>
+                            <option>Periféricos</option>
+                            <option>Monitores</option>
+                            <option>Redes</option>
+                            <option>Armazenamento</option>
+                            <option>Áudio e vídeo</option>
+                            <option>Outros</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <label for="price">Preço em R$ (opcional)</label>
+                        <input class="field" id="price" type="number" min="0" step="0.01" placeholder="299.90">
+                    </div>
+
+                    <div class="form-row full">
+                        <label for="description">Descrição (opcional)</label>
+                        <input class="field" id="description" maxlength="220"
+                            placeholder="Marca, modelo ou detalhe importante">
+                    </div>
+
+                    <div class="form-row full">
+                        <label for="imageUrl">Link direto da foto (opcional)</label>
+                        <input class="field" id="imageUrl" type="url" placeholder="https://site.com/foto.jpg">
+                    </div>
+
+                    <div class="form-row full">
+                        <label>Ou escolha uma foto do computador</label>
+                        <label class="upload" for="imageFile">↑ Escolher foto</label>
+                        <input id="imageFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
+                        <img id="preview" alt="Prévia da foto">
+                    </div>
+                </div>
+
+                <p id="formStatus" role="status"></p>
+                <div class="modal-actions">
+                    <button class="btn btn-outline" id="cancelModal" type="button">Cancelar</button>
+                    <button class="btn btn-primary" type="submit">Salvar produto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="toast" id="toast" role="status"></div>
+
+    <script>
+        (() => {
+            const KEY = "immakers.catalogo.v1";
+            const $ = id => document.getElementById(id);
+            const categories = [
+                "Notebooks", "Computadores", "Componentes", "Periféricos",
+                "Monitores", "Redes", "Armazenamento", "Áudio e vídeo", "Outros"
+            ];
+            const icons = {
+                Notebooks: "💻", Computadores: "🖥️", Componentes: "⚙️",
+                Periféricos: "⌨️", Monitores: "🖥️", Redes: "📡",
+                Armazenamento: "💾", "Áudio e vídeo": "🎧", Outros: "✦"
+            };
+
+            let products = load();
+            let uploadedImage = "";
+            let toastTimer;
+            const money = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+            $("year").textContent = new Date().getFullYear();
+
+            function validUrl(value) {
+                try {
+                    const url = new URL(value);
+                    return ["http:", "https:"].includes(url.protocol) ? url.href : "";
+                } catch {
+                    return "";
+                }
+            }
+
+            function imageValue(value) {
+                return value && value.startsWith("data:image/") ? value : validUrl(value);
+            }
+
+            function clean(item) {
+                if (!item || typeof item !== "object") return null;
+                const name = String(item.name || "").trim().slice(0, 120);
+                const link = validUrl(item.link || "");
+                if (!name || !link) return null;
+                return {
+                    id: String(item.id || crypto.randomUUID()),
+                    name,
+                    link,
+                    category: categories.includes(item.category) ? item.category : "Outros",
+                    price: item.price === null || item.price === "" || item.price === undefined
+                        ? null : Math.max(0, Number(item.price)),
+                    description: String(item.description || "").trim().slice(0, 220),
+                    image: imageValue(item.image || ""),
+                    createdAt: Number(item.createdAt) || Date.now()
+                };
+            }
+
+            function load() {
+                try {
+                    const data = JSON.parse(localStorage.getItem(KEY) || "[]");
+                    return Array.isArray(data) ? data.map(clean).filter(Boolean) : [];
+                } catch {
+                    return [];
+                }
+            }
+
+            function save(next) {
+                try {
+                    localStorage.setItem(KEY, JSON.stringify(next));
+                    products = next;
+                    render();
+                    return true;
+                } catch {
+                    notify("Espaço insuficiente. Tente uma foto menor ou baixe um backup.");
+                    return false;
+                }
+            }
+
+            function notify(message) {
+                const box = $("toast");
+                box.textContent = message;
+                box.classList.add("show");
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => box.classList.remove("show"), 4000);
+            }
+
+            function element(tag, className, text) {
+                const el = document.createElement(tag);
+                if (className) el.className = className;
+                if (text !== undefined) el.textContent = text;
+                return el;
+            }
+
+            function render() {
+                const grid = $("grid");
+                grid.replaceChildren();
+
+                const selectedCategory = $("categoryFilter").value;
+                $("categoryFilter").replaceChildren(
+                    new Option("Todas as categorias", ""),
+                    ...categories
+                        .filter(category => products.some(p => p.category === category))
+                        .map(category => new Option(category, category))
+                );
+                $("categoryFilter").value = selectedCategory;
+
+                const query = $("search").value.trim().toLocaleLowerCase("pt-BR");
+                const category = $("categoryFilter").value;
+                const sort = $("sort").value;
+
+                const visible = products.filter(p =>
+                    (!category || p.category === category) &&
+                    (!query || [p.name, p.category, p.description]
+                        .join(" ").toLocaleLowerCase("pt-BR").includes(query))
+                );
+
+                visible.sort((a, b) => {
+                    if (sort === "name") return a.name.localeCompare(b.name, "pt-BR");
+                    if (sort === "low") return (a.price ?? Infinity) - (b.price ?? Infinity);
+                    if (sort === "high") return (b.price ?? -1) - (a.price ?? -1);
+                    return b.createdAt - a.createdAt;
+                });
+
+                $("count").textContent = products.length === 1
+                    ? "1 produto" : `${products.length} produtos`;
+
+                if (!visible.length) {
+                    const empty = element("div", "empty");
+                    empty.append(
+                        element("div", "empty-icon", products.length ? "🔎" : "⌘"),
+                        element("h3", "", products.length ? "Nenhum produto encontrado" : "Seu catálogo começa aqui"),
+                        element("p", "", products.length
+                            ? "Tente outra pesquisa ou categoria."
+                            : "Adicione seu primeiro produto de tecnologia com link de compra e foto.")
+                    );
+                    if (!products.length) {
+                        const add = element("button", "btn btn-primary", "+ Adicionar produto");
+                        add.onclick = () => openModal();
+                        empty.append(add);
+                    }
+                    grid.append(empty);
+                    return;
+                }
+
+                visible.forEach(p => {
+                    const card = element("article", "card");
+                    const photo = element("div", "photo");
+                    photo.append(element("span", "badge", p.category));
+
+                    if (p.image) {
+                        const img = element("img");
+                        img.src = p.image;
+                        img.alt = `Foto de ${p.name}`;
+                        img.loading = "lazy";
+                        img.referrerPolicy = "no-referrer";
+                        img.onerror = () => {
+                            img.remove();
+                            photo.append(element("span", "emoji", icons[p.category] || "✦"));
+                        };
+                        photo.append(img);
+                    } else {
+                        photo.append(element("span", "emoji", icons[p.category] || "✦"));
+                    }
+
+                    const body = element("div", "card-body");
+                    body.append(
+                        element("h3", "", p.name),
+                        element("p", "description", p.description || "Produto de tecnologia selecionado para a IMMakers."),
+                        element("div", p.price === null ? "price unknown" : "price",
+                            p.price === null ? "Consulte o preço no site" : money.format(p.price))
+                    );
+
+                    const actions = element("div", "card-actions");
+                    const buy = element("a", "btn btn-primary buy", "Ver produto ↗");
+                    buy.href = p.link;
+                    buy.target = "_blank";
+                    buy.rel = "noopener noreferrer";
+                    buy.setAttribute("aria-label", `Abrir link de compra de ${p.name}`);
+
+                    const edit = element("button", "icon-btn", "✎");
+                    edit.title = "Editar produto";
+                    edit.setAttribute("aria-label", `Editar ${p.name}`);
+                    edit.onclick = () => openModal(p);
+
+                    const remove = element("button", "icon-btn", "×");
+                    remove.title = "Excluir produto";
+                    remove.setAttribute("aria-label", `Excluir ${p.name}`);
+                    remove.onclick = () => {
+                        if (confirm(`Excluir “${p.name}” do catálogo?`)) {
+                            if (save(products.filter(item => item.id !== p.id))) notify("Produto excluído.");
+                        }
+                    };
+
+                    actions.append(buy, edit, remove);
+                    body.append(actions);
+                    card.append(photo, body);
+                    grid.append(card);
+                });
+            }
+
+            function preview(src) {
+                const img = $("preview");
+                if (src) {
+                    img.src = src;
+                    img.style.display = "block";
+                } else {
+                    img.removeAttribute("src");
+                    img.style.display = "none";
+                }
+            }
+
+            function openModal(item) {
+                $("productForm").reset();
+                $("productId").value = item?.id || "";
+                $("modalTitle").textContent = item ? "Editar produto" : "Adicionar produto";
+                $("link").value = item?.link || "";
+                $("name").value = item?.name || "";
+                $("category").value = item?.category || "Notebooks";
+                $("price").value = item?.price ?? "";
+                $("description").value = item?.description || "";
+                uploadedImage = item?.image?.startsWith("data:") ? item.image : "";
+                $("imageUrl").value = uploadedImage ? "" : item?.image || "";
+                preview(uploadedImage || $("imageUrl").value);
+                $("formStatus").textContent = "";
+                $("overlay").classList.add("open");
+                document.body.style.overflow = "hidden";
+                $("link").focus();
+            }
+
+            function closeModal() {
+                $("overlay").classList.remove("open");
+                document.body.style.overflow = "";
+            }
+
+            $("addTop").onclick = () => openModal();
+            $("addHero").onclick = () => openModal();
+            $("closeModal").onclick = closeModal;
+            $("cancelModal").onclick = closeModal;
+            $("overlay").onclick = e => {
+                if (e.target === $("overlay")) closeModal();
+            };
+            document.addEventListener("keydown", e => {
+                if (e.key === "Escape") closeModal();
+            });
+
+            ["search", "categoryFilter", "sort"].forEach(id => {
+                $(id).addEventListener(id === "search" ? "input" : "change", render);
+            });
+
+            $("imageUrl").addEventListener("input", () => {
+                uploadedImage = "";
+                preview(validUrl($("imageUrl").value));
+            });
+
+            $("imageFile").addEventListener("change", async e => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                if (!/^image\/(png|jpeg|webp|gif)$/.test(file.type)) {
+                    notify("Escolha uma imagem JPG, PNG, WebP ou GIF.");
+                    return;
+                }
+                try {
+                    const bitmap = await createImageBitmap(file);
+                    const scale = Math.min(1, 900 / Math.max(bitmap.width, bitmap.height));
+                    const canvas = document.createElement("canvas");
+                    canvas.width = Math.round(bitmap.width * scale);
+                    canvas.height = Math.round(bitmap.height * scale);
+                    canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+                    bitmap.close?.();
+                    uploadedImage = canvas.toDataURL("image/jpeg", 0.75);
+                    $("imageUrl").value = "";
+                    preview(uploadedImage);
+                    notify("Foto pronta para salvar.");
+                } catch {
+                    notify("Não foi possível abrir esta imagem.");
+                }
+            });
+
+            $("autoFill").onclick = async () => {
+                const link = validUrl($("link").value);
+                if (!link) {
+                    notify("Insira um link válido começando com https://");
+                    return;
+                }
+
+                const button = $("autoFill");
+                button.disabled = true;
+                button.textContent = "Buscando...";
+                $("formStatus").textContent = "Tentando ler os dados da página...";
+
+                try {
+                    const controller = new AbortController();
+                    const timer = setTimeout(() => controller.abort(), 7000);
+                    let response;
+                    try {
+                        response = await fetch(link, { signal: controller.signal });
+                    } finally {
+                        clearTimeout(timer);
+                    }
+                    if (!response.ok) throw new Error("Leitura bloqueada");
+
+                    const html = await response.text();
+                    const doc = new DOMParser().parseFromString(html, "text/html");
+                    const meta = (...selectors) =>
+                        selectors.map(s => doc.querySelector(s)?.getAttribute("content")).find(Boolean) || "";
+
+                    const title = meta('meta[property="og:title"]', 'meta[name="twitter:title"]') || doc.title;
+                    const image = meta('meta[property="og:image"]', 'meta[name="twitter:image"]');
+                    const description = meta('meta[property="og:description"]', 'meta[name="description"]');
+
+                    if (!title && !image) throw new Error("Sem dados");
+                    if (title && !$("name").value) $("name").value = title.trim().slice(0, 120);
+                    if (description && !$("description").value) {
+                        $("description").value = description.trim().slice(0, 220);
+                    }
+                    if (image && !$("imageUrl").value && !uploadedImage) {
+                        $("imageUrl").value = new URL(image, link).href;
+                        preview($("imageUrl").value);
+                    }
+
+                    $("formStatus").textContent = "Dados encontrados. Confira antes de salvar.";
+                    notify("Dados do link preenchidos.");
+                } catch {
+                    $("formStatus").textContent =
+                        "Esta loja bloqueou a leitura automática. Preencha nome e foto manualmente.";
+                    notify("Preencha os dados manualmente.");
+                } finally {
+                    button.disabled = false;
+                    button.textContent = "Preencher pelo link";
+                }
+            };
+
+            $("productForm").onsubmit = e => {
+                e.preventDefault();
+                const id = $("productId").value;
+                const existing = products.find(p => p.id === id);
+                const item = clean({
+                    id: id || crypto.randomUUID(),
+                    link: $("link").value,
+                    name: $("name").value,
+                    category: $("category").value,
+                    price: $("price").value === "" ? null : $("price").value,
+                    description: $("description").value,
+                    image: uploadedImage || $("imageUrl").value,
+                    createdAt: existing?.createdAt || Date.now()
+                });
+
+                if (!item) {
+                    notify("Preencha nome e link válidos.");
+                    return;
+                }
+
+                const next = id
+                    ? products.map(p => p.id === id ? item : p)
+                    : [item, ...products];
+
+                if (save(next)) {
+                    closeModal();
+                    notify(id ? "Produto atualizado." : "Produto adicionado.");
+                }
+            };
+
+            $("exportBtn").onclick = () => {
+                const blob = new Blob(
+                    [JSON.stringify({ app: "IMMakers", version: 1, products }, null, 2)],
+                    { type: "application/json" }
+                );
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "immakers-produtos-backup.json";
+                a.click();
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+            };
+
+            $("importFile").onchange = async e => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                try {
+                    const data = JSON.parse(await file.text());
+                    const list = Array.isArray(data) ? data : data.products;
+                    if (!Array.isArray(list)) throw new Error("Formato inválido");
+                    const imported = list.map(clean).filter(Boolean);
+                    if (!imported.length) throw new Error("Sem produtos");
+
+                    const merged = new Map(products.map(p => [p.id, p]));
+                    imported.forEach(p => merged.set(p.id, p));
+                    if (save([...merged.values()])) notify(`${imported.length} produto(s) importado(s).`);
+                } catch {
+                    notify("Arquivo de backup inválido.");
+                }
+                e.target.value = "";
+            };
+
+            render();
+        })();
+    </script>
+</body>
+
+</html>
