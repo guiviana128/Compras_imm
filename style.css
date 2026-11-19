@@ -43,13 +43,15 @@ header {
     margin: 18px 0 18px;
     padding: 0 29px;
     border-radius: 20px;
-    background: var(--forest-dark);
+    background: #ffffff;
+    box-shadow: 0 14px 38px rgba(35, 16, 47, 0.22);
+    border: 1px solid rgba(255, 255, 255, 0.9);
 }
 .brand { display: flex; align-items: center; flex: none; }
-.brand img { display: block; width: 186px; height: auto; max-height: 42px; object-fit: contain; }
+.brand img { display: block; width: auto; height: 48px; max-height: 52px; max-width: 280px; object-fit: contain; }
 .header-right { display: flex; align-items: center; gap: 30px; }
-.header-link { color: #f1deef; font-size: 14px; font-weight: 700; }
-.header-link:hover { color: var(--lime); }
+.header-link { color: var(--forest-dark); font-size: 15px; font-weight: 700; transition: color .18s; }
+.header-link:hover { color: var(--pink); }
 
 .btn {
     display: inline-flex;
@@ -324,7 +326,7 @@ button:active, .btn:active { transform: scale(.98); }
 @media (max-width: 560px) {
     .container { width: calc(100% - 28px); }
     header { height: 66px; margin: 12px 0 14px; padding: 0 14px; border-radius: 12px; }
-    .brand img { width: 143px; }
+    .brand img { height: 38px; max-height: 40px; width: auto; max-width: 175px; }
     header .btn { min-height: 44px; padding: 8px 11px; font-size: 12px; }
     .hero { margin-bottom: 45px; padding: 37px 25px 44px; border-radius: 18px; }
     .choice-bubble { padding: 20px; border-radius: 21px; }
